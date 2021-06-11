@@ -167,3 +167,68 @@ def print_board(board):
     print('|  ----    ----    ----    ----    ----    ----    ----    ----  |')
     print(' ----------------------------------------------------------------')
 
+
+if __name__ == '__main__':
+    load, save, first, steal, difficulty = '', '', '', '', ''
+    while not (load in ['y', 'Y', 'n', 'N']):
+        load = input('Do you want to load previous game? (Y/N): ')
+
+    if load in ['y', 'Y']:
+        file = open('progress.txt')
+        loaded = file.read()
+        difficulty = int(loaded[-1])
+        loaded = loaded[:-2]
+
+        steal = loaded[-1]
+        if steal == '1':
+            steal = True
+        else:
+            steal = False
+        loaded = loaded[:-2]
+
+        board = array([])
+        for pocket in loaded.split():
+            board = append(board, [int(pocket)])
+        board = board.astype(int)
+        print_board(board)
+        print()
+        file.close()
+
+    else:
+        while not (first in ['y', 'Y', 'n', 'N']):
+            first = input('Do you want to play first? (Y/N): ')
+        if first in ['y', 'Y']:
+            first = True
+        elif first in ['n', 'N']:
+            first = False
+
+        while not (steal in ['y', 'Y', 'n', 'N']):
+            steal = input('Play with stealing? (Y/N): ')
+        if steal in ['y', 'Y']:
+            steal = True
+        elif steal in ['n', 'N']:
+            steal = False
+
+        while not (difficulty in ['e', 'E', 'm', 'M', 'h', 'H']):
+            difficulty = input('Select difficulty: (Easy - E), (Medium - M), (Hard - H): ')
+        if difficulty in ['e', 'E']:
+            difficulty = 4
+        elif difficulty in ['m', 'M']:
+            difficulty = 6
+        elif difficulty in ['h', 'H']:
+            difficulty = 8
+
+        board = array([4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0])
+        print_board(board)
+        print()
+
+        if not first:
+            print('AI is thinking...')
+            root = build_tree(board, difficulty, True, steal)
+            best_move = root.traverse(-inf, inf)
+            index = root.pocket_index(best_move)
+            board = play(board, index, True, steal)[0]
+            print_board(board)
+            print()
+            
+            
