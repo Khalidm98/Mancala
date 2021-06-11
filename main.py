@@ -103,3 +103,67 @@ def play(board, index, ai, steal):
         board = append(board[7:], board[:7])
 
     return board, game_over
+
+
+def build_tree(current_board, depth, maximizer, steal):
+    root = Node(maximizer)
+
+    if depth > 0:
+        if not maximizer:
+            current_board = append(current_board[7:], current_board[:7])
+
+        for index in range(6):
+            if current_board[index] == 0:
+                continue
+
+            board = current_board.copy()
+            board, game_over = empty_pocket(board, index, steal)
+
+            if not maximizer:
+                board = append(board[7:], board[:7])
+
+            if game_over:
+                child = Node(not maximizer)
+                if maximizer:
+                    child.beta = current_board[6] - current_board[13]
+                else:
+                    child.alpha = current_board[6] - current_board[13]
+                root.children.append(child)
+
+            else:
+                root.children.append(build_tree(board, depth - 1, not maximizer, steal))
+
+    else:
+        if maximizer:
+            root.alpha = current_board[6] - current_board[13]
+        else:
+            root.beta = current_board[6] - current_board[13]
+
+    return root
+
+
+def pad(num):
+    if num < 10:
+        return f' {num}'
+    return f'{num}'
+
+
+def print_board(board):
+    player1 = '| |    | '
+    player2 = '| |    | '
+    for i in range(6):
+        player1 += f' | {pad(board[i + 7])} | '
+        player2 += f' | {pad(board[5 - i])} | '
+    player1 += ' |    | |'
+    player2 += ' |    | |'
+
+    print(' ----------------------------------------------------------------')
+    print('|  ----    ----    ----    ----    ----    ----    ----    ----  |')
+    print(player2)
+    print('| |    |   ----    ----    ----    ----    ----    ----   |    | |')
+    print(f'| | {pad(board[6])} |                                                  | {pad(board[13])} | |')
+    print('| |    |   ----    ----    ----    ----    ----    ----   |    | |')
+    print(player1)
+    print('|  ----    ----    ----    ----    ----    ----    ----    ----  |')
+    print(' ----------------------------------------------------------------')
+
