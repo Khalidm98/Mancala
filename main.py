@@ -231,4 +231,69 @@ if __name__ == '__main__':
             print_board(board)
             print()
             
-            
+ 
+    while True:
+        index = ''
+        while not (index in ['0', '1', '2', '3', '4', '5', 'q', 'Q']):
+            index = input('Select a pocket to play [0-5] or (Q) for quit: ')
+
+        if index == 'q' or index == 'Q':
+            while not (save in ['y', 'Y', 'n', 'N']):
+                save = input('Do you want to save? (Y/N): ')
+
+            if save in ['y', 'Y']:
+                pockets = ''
+                for pocket in board:
+                    pockets += str(pocket) + ' '
+
+                if steal:
+                    pockets += '1 '
+                else:
+                    pockets += '0 '
+                pockets += str(difficulty)
+
+                file = open('progress.txt', 'w')
+                file.write(pockets)
+                file.close()
+                print('Saved successfully.')
+            break
+
+        index = int(index)
+        if board[index + 7] == 0:
+            print('You cannot play an empty pocket!')
+            continue
+
+        board, game_over = play(board, index, False, steal)
+        print_board(board)
+        print()
+        if game_over:
+            if board[6] > board[13]:
+                print('AI WINS')
+            elif board[6] < board[13]:
+                print('YOU WIN')
+            else:
+                print('DEAL')
+            break
+
+        t1 = time()
+        print('AI is thinking...')
+        root = build_tree(board, difficulty, True, steal)
+        best_move = root.traverse(-inf, inf)
+        index = root.pocket_index(best_move)
+        board, game_over = play(board, index, True, steal)
+        print_board(board)
+        t2 = time()
+        print(f'{t2 - t1} sec')
+        print()
+        if game_over:
+            if board[6] > board[13]:
+                print('AI WINS')
+            elif board[6] < board[13]:
+                print('YOU WIN')
+            else:
+                print('DEAL')
+            break
+
+    if not (save in ['n', 'N']):
+        input('Enter any key to exit\n')
+        
