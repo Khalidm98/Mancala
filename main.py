@@ -230,8 +230,7 @@ if __name__ == '__main__':
             board = play(board, index, True, steal)[0]
             print_board(board)
             print()
-            
- 
+
     while True:
         index = ''
         while not (index in ['0', '1', '2', '3', '4', '5', 'q', 'Q']):
@@ -296,4 +295,3 @@ if __name__ == '__main__':
 
     if not (save in ['n', 'N']):
         input('Enter any key to exit\n')
-        
